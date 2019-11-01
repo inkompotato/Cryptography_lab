@@ -9,27 +9,18 @@ current_time_ms = lambda: int(round(time() * 1000))
 # using the extended Euclidian algorithm.
 def calculate_gcd(a, b):
     if a >= 0 and b >= 0 and a != 0 or b != 0:
-        c = a
-        d = b
-        uc = 1
-        vc = 0
-        ud = 0
-        vd = 1
+        c, d = a, b
+        uc, vc, ud, vd = 1, 0, 0, 1
 
         while c != 0:
             q = int(d / c)
 
             c_temp = c
-            c = d - q * c
-            d = c_temp
+            c, d = d - q * c, c_temp
 
-            uc_temp = uc
-            vc_temp = vc
+            uc_temp, vc_temp = uc, vc
 
-            uc = ud - q * uc
-            vc = vd - q * vc
-            ud = uc_temp
-            vd = vc_temp
+            uc, vc, ud, vd = ud - q * uc, vd - q * vc, uc_temp, vc_temp
 
         return d, ud, vd
     else:
