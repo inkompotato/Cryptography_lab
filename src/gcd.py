@@ -1,7 +1,6 @@
 from time import time
 from random import randint
 
-
 current_time_ms = lambda: int(round(time() * 1000))
 
 
@@ -51,5 +50,5 @@ def benchmark_gcd():
     print(f'calculated [GCD = {result[0]}] in {end - start}ms using a {prime.bit_length()} bit long prime number')
 
 
-# benchmark_gcd()
+benchmark_gcd()
 
