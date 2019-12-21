@@ -1,27 +1,65 @@
 from Crypto.Cipher import AES
+from src.dictionary import Dictionary
 
-mode = input("select mode e (encrypt) or d (decrypt): \n")
-key_string = input("enter key: \n")
+
+d = Dictionary()
+mode = input("select mode e (encrypt), r (encrypt with random key), d (decrypt) or c (crack)?: \n")
+
+key_string = ""
+if mode == "e" or mode == "d":
+    key_string = input("enter key: \n")
+elif mode == "r":
+    key_string = d.random_word()
+    print(f"{key_string} was chosen as the random key")
+    numbers = input("salt key (y / n)?\n")
+    if numbers == "y":
+        key_string = key_string.replace("o", "0")
+        key_string = key_string.replace("i", "1")
+        key_string = key_string.replace("e", "3")
+        key_string = key_string.replace("s", "5")
+        print(f"key looks now like this: {key_string}")
+    mode = "e"
+elif mode == "c":
+    print("craking mode selected, no key input is required")
+
+while len(key_string) % 16 != 0:
+    key_string += " "
+
 message_string = ""
 
-if mode == "e":
+if mode == "e":  # r = e at this point
     message_string = input("enter plaintext message: \n")
-if mode == "d":
+elif mode == "d" or mode == "c":
     message_string = input("enter encrypted message: \n")
 else:
     print("unrecognized input, exiting program")
     quit(1)
 
-key_string_hex = key_string.encode("ascii").hex()
-cipher = AES.new(bytearray.fromhex(key_string_hex), AES.MODE_ECB)
-
 if mode == "e":
+    key_string_hex = key_string.encode("ascii").hex()
+    cipher = AES.new(bytearray.fromhex(key_string_hex), AES.MODE_ECB)
+
     while len(message_string) % 16 != 0:
         message_string += " "
     message_string_hex = message_string.encode("ascii").hex()
     cipher_text = cipher.encrypt(bytearray.fromhex(message_string_hex))
     print(f"message has been encrypted: \n {cipher_text.hex()}")
 
+if mode == "c":
+    for i in range(0,len(d.wordarray)):
+        while len(d.wordarray[i]) % 16 != 0:
+            d.wordarray[i] += " "
+        new_key_string_hex = d.wordarray[i].encode("ascii").hex()
+        new_cipher = AES.new(bytearray.fromhex(new_key_string_hex), AES.MODE_ECB)
+        try:
+            plain_text = new_cipher.decrypt(bytearray.fromhex(message_string))
+            print(f"message candidate: \n {plain_text.decode('ascii')}")
+        except:
+            continue
+
 if mode == "d":
+    key_string_hex = key_string.encode("ascii").hex()
+    cipher = AES.new(bytearray.fromhex(key_string_hex), AES.MODE_ECB)
+
     plain_text = cipher.decrypt(bytearray.fromhex(message_string))
     print(f"message has been decrypted: \n {plain_text.decode('ascii')}")
