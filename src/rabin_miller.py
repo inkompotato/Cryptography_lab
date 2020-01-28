@@ -65,8 +65,8 @@ def test_512bit():
     while True:
         tries += 1
         num = number.getRandomNBitInteger(512)
-        print(f"try #{tries}")
-        if rabin_miller(num, 1):
+        print(f"try {num}")
+        if rabin_miller(num, 2):
             end = current_time_ms()
             print(f" {num} is a pseudo-prime, found after {tries} tries in {end-start}ms")
             return
